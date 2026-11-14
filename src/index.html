@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luz do Teclado</title>
+<style>
+  :root {
+    --fundo: #14161d;
+    --painel: #1c1f29;
+    --borda: #2a2e3b;
+    --texto: #e9e6df;
+    --suave: #8a8fa0;
+    --tecla: #262a36;
+    --tecla-topo: #2f3441;
+    --luz: #ffb454;
+    --luz-forte: #ffd08a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --fundo: #e9e6df;
+      --painel: #f6f3ec;
+      --borda: #d2cec3;
+      --texto: #22242c;
+      --suave: #6d7080;
+      --tecla: #c9c5b9;
+      --tecla-topo: #dcd8cc;
+      --luz: #e0861a;
+      --luz-forte: #f2a64a;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Cantarell", "Inter", system-ui, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 28px 24px 24px;
+    gap: 22px;
+    user-select: none;
+  }
+  h1 { font-size: 22px; font-weight: 700; letter-spacing: .2px; }
+  .sub { color: var(--suave); font-size: 14px; margin-top: 4px; text-align: center; }
+
+  /* Teclado ilustrado: as teclas acendem por baixo */
+  .teclado {
+    width: 100%;
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: 18px;
+    padding: 18px 14px;
+    display: grid; gap: 6px;
+    transition: box-shadow .5s, border-color .5s;
+  }
+  .teclado.aceso {
+    border-color: color-mix(in srgb, var(--luz) 55%, var(--borda));
+    box-shadow: 0 0 46px -12px var(--luz);
+  }
+  .linha { display: flex; gap: 6px; justify-content: center; }
+  .tecla {
+    height: 30px; flex: 1; border-radius: 6px;
+    background: var(--tecla-topo);
+    border-bottom: 3px solid var(--tecla);
+    transition: background .4s, box-shadow .4s, border-color .4s;
+  }
+  .tecla.larga { flex: 5; }
+  .tecla.media { flex: 1.6; }
+  .aceso .tecla {
+    background: color-mix(in srgb, var(--luz) 22%, var(--tecla-topo));
+    border-bottom-color: var(--luz);
+    box-shadow: 0 6px 12px -6px var(--luz);
+  }
+  .aceso .tecla:nth-child(3n) { background: color-mix(in srgb, var(--luz-forte) 30%, var(--tecla-topo)); }
+
+  .estado { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 10px; min-height: 26px; }
+  .ponto { width: 10px; height: 10px; border-radius: 50%; background: var(--suave); transition: .3s; }
+  .aceso-txt .ponto { background: var(--luz); box-shadow: 0 0 10px var(--luz); }
+
+  .botoes { display: flex; gap: 12px; width: 100%; }
+  button {
+    font: inherit; cursor: pointer; border-radius: 14px; border: 1px solid var(--borda);
+    padding: 15px 10px; font-size: 16px; font-weight: 700; color: var(--texto);
+    background: var(--painel); flex: 1;
+    transition: transform .08s, background .2s, opacity .2s;
+  }
+  button:hover:not(:disabled) { background: var(--tecla-topo); }
+  button:active:not(:disabled) { transform: scale(.97); }
+  button:disabled { opacity: .45; cursor: default; }
+  button:focus-visible { outline: 2px solid var(--luz); outline-offset: 2px; }
+  #ligar { background: var(--luz); border-color: var(--luz); color: #1d1507; }
+  #ligar:hover:not(:disabled) { background: var(--luz-forte); }
+
+  .aviso {
+    width: 100%; background: var(--painel); border: 1px solid var(--borda);
+    border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.45;
+    color: var(--suave); display: none;
+  }
+  .aviso.visivel { display: block; }
+  .aviso strong { color: var(--texto); display: block; margin-bottom: 4px; font-size: 15px; }
+  .aviso button { margin-top: 12px; width: 100%; padding: 11px; font-size: 14px; }
+  .espaco { flex: 1; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+  <header style="text-align:center">
+    <h1>Luz do Teclado</h1>
+    <p class="sub">Acende a luz de teclados genéricos</p>
+  </header>
+
+  <div class="teclado" id="teclado" aria-hidden="true">
+    <div class="linha"><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i></div>
+    <div class="linha"><i class="tecla media"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla media"></i></div>
+    <div class="linha"><i class="tecla"></i><i class="tecla media"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla"></i><i class="tecla media"></i><i class="tecla"></i></div>
+    <div class="linha"><i class="tecla media"></i><i class="tecla larga"></i><i class="tecla media"></i></div>
+  </div>
+
+  <div class="estado" id="estado"><span class="ponto"></span><span id="estado-txt">Verificando…</span></div>
+
+  <div class="botoes">
+    <button id="ligar">Ligar luz</button>
+    <button id="desligar">Desligar luz</button>
+  </div>
+
+  <div class="aviso" id="aviso"></div>
+  <div class="espaco"></div>
+
+<script>
+  const { invoke } = window.__TAURI__.core;
+  const $ = (id) => document.getElementById(id);
+  let pediuAutomatico = false;
+  let configurando = false;
+
+  function mostrarAviso(titulo, texto, botao, acao) {
+    const el = $("aviso");
+    el.innerHTML = `<strong></strong><span></span>`;
+    el.querySelector("strong").textContent = titulo;
+    el.querySelector("span").textContent = texto;
+    if (botao) {
+      const b = document.createElement("button");
+      b.textContent = botao;
+      b.onclick = acao;
+      el.appendChild(b);
+    }
+    el.classList.add("visivel");
+  }
+  const esconderAviso = () => $("aviso").classList.remove("visivel");
+
+  function pintar(e) {
+    $("teclado").classList.toggle("aceso", e.ligado);
+    $("estado").classList.toggle("aceso-txt", e.ligado);
+    $("estado-txt").textContent = e.encontrados === 0
+      ? "Nenhum teclado compatível"
+      : e.ligado ? "Luz ligada" : "Luz desligada";
+    const bloqueado = e.encontrados === 0;
+    $("ligar").disabled = bloqueado || configurando;
+    $("desligar").disabled = bloqueado || configurando;
+  }
+
+  async function configurar() {
+    configurando = true;
+    $("ligar").disabled = $("desligar").disabled = true;
+    try {
+      await invoke("configurar_permissao");
+      esconderAviso();
+    } catch (err) {
+      const msg = err === "cancelado"
+        ? "A senha não foi informada. Sem ela a luz não pode ser controlada."
+        : "Não foi possível liberar o acesso: " + err;
+      mostrarAviso("Permissão necessária", msg, "Tentar de novo", configurar);
+    }
+    configurando = false;
+    atualizar();
+  }
+
+  async function atualizar() {
+    const e = await invoke("estado");
+    pintar(e);
+    if (e.encontrados === 0) {
+      mostrarAviso("Teclado não encontrado",
+        "Não achei nenhum LED de Scroll Lock neste computador. Conecte o teclado e abra o programa de novo.");
+    } else if (!e.permitido && !configurando) {
+      if (!pediuAutomatico) {            // primeira abertura: já pede a senha
+        pediuAutomatico = true;
+        mostrarAviso("Configurando…", "Digite a senha de administrador para liberar o controle da luz. Isso é feito só uma vez.");
+        configurar();
+      } else {
+        mostrarAviso("Permissão necessária",
+          "Libere o acesso ao LED uma única vez. Depois disso o programa não pede mais senha.",
+          "Liberar acesso", configurar);
+      }
+    } else if (e.permitido) {
+      esconderAviso();
+    }
+  }
+
+  async function definir(ligar) {
+    try {
+      await invoke("definir_luz", { ligar });
+    } catch (err) {
+      if (err === "sem_permissao") configurar();
+    }
+    atualizar();
+  }
+
+  $("ligar").onclick = () => definir(true);
+  $("desligar").onclick = () => definir(false);
+
+  atualizar();
+  setInterval(atualizar, 2000);
+</script>
+</body>
+</html>
