@@ -1,5 +1,9 @@
 # 💡 Luz do Teclado
 
+<p align="center">
+  <img src="print.png" alt="Tela do Luz do Teclado" width="320">
+</p>
+
 Liga e desliga a luz de teclados genéricos no Linux, com dois cliques e sem digitar comandos.
 
 Muitos teclados baratos têm a luz de fundo, mas ela **não acende sozinha** em alguns sistemas
