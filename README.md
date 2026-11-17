@@ -12,7 +12,7 @@ Muitos teclados baratos têm a luz de fundo, mas ela **não acende sozinha** em 
 ## ⬇️ Baixar
 
 Pegue o arquivo `.AppImage` mais recente na página de
-**[Releases](https://github.com/ezekielso/luz-teclado/releases/latest)**.
+**[Releases](https://github.com/aaaiiicerol/luz-teclado/releases/latest)**.
 
 ## ▶️ Como usar
 
@@ -57,7 +57,7 @@ Para desfazer a permissão: `sudo rm /etc/udev/rules.d/99-luz-teclado.rules`
 Precisa de Node.js e Rust.
 
 ```bash
-git clone https://github.com/ezekielso/luz-teclado
+git clone https://github.com/aaaiiicerol/luz-teclado
 cd luz-teclado
 npm install
 NO_STRIP=true npm run tauri build -- --bundles appimage
