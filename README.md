@@ -11,8 +11,16 @@ Muitos teclados baratos têm a luz de fundo, mas ela **não acende sozinha** em 
 
 ## ⬇️ Baixar
 
-Pegue o arquivo `.AppImage` mais recente na página de
-**[Releases](https://github.com/ezekielso/luz-teclado/releases/latest)**.
+Pegue o arquivo mais recente na página de
+**[Releases](https://github.com/ezekielso/luz-teclado/releases/latest)**:
+
+| Arquivo | Para quem |
+|---|---|
+| `.deb` | Linux Mint, Ubuntu, Debian. Instala e aparece no menu de aplicativos |
+| `.rpm` | Fedora, openSUSE |
+| `.AppImage` | Qualquer distro, sem instalar |
+
+Instalar o `.deb`: `sudo apt install ./Luz*.deb` · Instalar o `.rpm`: `sudo dnf install ./Luz*.rpm`
 
 ## ▶️ Como usar
 
@@ -25,6 +33,23 @@ Pegue o arquivo `.AppImage` mais recente na página de
 4. Clique em **Ligar luz** ou **Desligar luz**.
 
 > **Linux Mint / Ubuntu:** se o AppImage não abrir, instale o FUSE: `sudo apt install libfuse2`
+
+## ✨ Recursos
+
+- **Ligar ao iniciar o sistema:** a luz acende sozinha quando você entra no computador.
+- **Ícone na bandeja:** ligue e desligue sem abrir a janela (ative em *Continuar na bandeja ao fechar*).
+- **Linha de comando**, para atalhos e scripts:
+  ```bash
+  luz-teclado --on        # liga
+  luz-teclado --off       # desliga
+  luz-teclado --toggle    # alterna
+  luz-teclado --status    # mostra o estado
+  ```
+  No AppImage use o nome do arquivo: `./Luz*.AppImage --on`
+- **Copiar informações de suporte:** gera um texto com a sua distro e os LEDs do teclado, para colar nos comentários ou numa *issue* quando algo não funciona.
+- **Remover permissão:** desfaz a regra de acesso ao LED, direto pela janela.
+
+> **Ligar ao iniciar com AppImage:** não mova nem renomeie o arquivo depois de ativar a opção, ou desative e ative de novo.
 
 ## ❓ Como funciona
 
@@ -42,13 +67,13 @@ O programa faz isso por você:
 - **Pede a senha uma vez** e cria a regra `/etc/udev/rules.d/99-luz-teclado.rules`, que libera
   a escrita **somente** nos LEDs de Scroll Lock. Depois disso não pede mais senha, nem após reiniciar.
 
-Para desfazer a permissão: `sudo rm /etc/udev/rules.d/99-luz-teclado.rules`
+Para desfazer a permissão, use o botão **Remover permissão** ou `sudo rm /etc/udev/rules.d/99-luz-teclado.rules`
 
 ## 🛠️ Problemas comuns
 
 | Problema | Solução |
 |---|---|
-| "Nenhum teclado compatível" | O seu teclado talvez use outro nome de LED. Abra uma *issue* e informe o resultado de `ls /sys/class/leds/` |
+| "Nenhum teclado compatível" | O seu teclado talvez use outro nome de LED. Clique em **Copiar informações de suporte** e cole numa *issue* |
 | Tela em branco (NVIDIA/Wayland) | Abra com `WEBKIT_DISABLE_DMABUF_RENDERER=1 ./arquivo.AppImage` |
 | A luz apaga ao apertar Scroll Lock | Normal: o teclado usa essa tecla para a mesma luz. Clique em Ligar de novo |
 

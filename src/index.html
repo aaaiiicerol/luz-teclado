@@ -99,6 +99,23 @@
   .aviso.visivel { display: block; }
   .aviso strong { color: var(--texto); display: block; margin-bottom: 4px; font-size: 15px; }
   .aviso button { margin-top: 12px; width: 100%; padding: 11px; font-size: 14px; }
+
+  .config { width: 100%; background: var(--painel); border: 1px solid var(--borda); border-radius: 16px; padding: 6px 16px 16px; }
+  .config h2 { font-size: 13px; font-weight: 700; color: var(--suave); text-transform: uppercase; letter-spacing: .6px; margin: 12px 0 4px; }
+  .cfg { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--borda); cursor: pointer; }
+  .cfg span { font-size: 15px; font-weight: 600; }
+  .cfg small { display: block; color: var(--suave); font-weight: 400; font-size: 12.5px; margin-top: 2px; line-height: 1.35; }
+  .sw { appearance: none; -webkit-appearance: none; flex: none; width: 44px; height: 26px; border-radius: 13px; background: var(--tecla); position: relative; cursor: pointer; transition: background .2s; border: 1px solid var(--borda); }
+  .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--texto); transition: transform .2s; }
+  .sw:checked { background: var(--luz); border-color: var(--luz); }
+  .sw:checked::after { transform: translateX(18px); background: #1d1507; }
+  .sw:focus-visible { outline: 2px solid var(--luz); outline-offset: 2px; }
+  .pequenos { margin-top: 14px; flex-direction: column; gap: 8px; }
+  .pequenos button { font-size: 14px; padding: 11px; font-weight: 600; }
+  #msg { font-size: 13px; color: var(--suave); text-align: center; min-height: 18px; margin-top: 10px; }
+  #info { display: none; width: 100%; height: 130px; margin-top: 10px; border-radius: 10px; border: 1px solid var(--borda); background: var(--fundo); color: var(--texto); font: 12px/1.4 ui-monospace, monospace; padding: 8px; resize: none; user-select: text; }
+  #info.visivel { display: block; }
+  body { overflow-y: auto; }
   .espaco { flex: 1; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -124,6 +141,26 @@
   </div>
 
   <div class="aviso" id="aviso"></div>
+
+  <section class="config">
+    <h2>Configurações</h2>
+    <label class="cfg">
+      <span>Ligar a luz ao iniciar o sistema<small>Acende sozinha quando você entra no computador</small></span>
+      <input type="checkbox" class="sw" id="auto">
+    </label>
+    <label class="cfg">
+      <span>Continuar na bandeja ao fechar<small>Controle pelo ícone perto do relógio. No GNOME precisa da extensão AppIndicator</small></span>
+      <input type="checkbox" class="sw" id="bandeja">
+    </label>
+    <div class="botoes pequenos">
+      <button id="copiar">Copiar informações de suporte</button>
+      <button id="remover">Remover permissão</button>
+    </div>
+    <div id="msg" role="status"></div>
+    <textarea id="info" readonly aria-label="Informações de suporte"></textarea>
+  </section>
+
+
   <div class="espaco"></div>
 
 <script>
@@ -206,6 +243,74 @@
 
   $("ligar").onclick = () => definir(true);
   $("desligar").onclick = () => definir(false);
+
+
+  // ---------- Configurações
+  let temporizadorMsg;
+  function msg(texto) {
+    $("msg").textContent = texto;
+    clearTimeout(temporizadorMsg);
+    temporizadorMsg = setTimeout(() => ($("msg").textContent = ""), 5000);
+  }
+
+  async function ligarInterruptor(id, comando, ativar) {
+    const caixa = $(id);
+    try {
+      await invoke(comando, { ativar });
+    } catch (err) {
+      caixa.checked = !ativar;
+      msg("Não foi possível salvar: " + err);
+    }
+  }
+  $("auto").onchange = (e) => ligarInterruptor("auto", "autostart_definir", e.target.checked);
+  $("bandeja").onchange = (e) => ligarInterruptor("bandeja", "bandeja_definir", e.target.checked);
+
+  async function copiarInfo() {
+    const texto = await invoke("info_suporte");
+    const caixa = $("info");
+    caixa.value = texto;
+    caixa.classList.add("visivel");
+    let copiou = false;
+    try {
+      await navigator.clipboard.writeText(texto);
+      copiou = true;
+    } catch (_) {
+      caixa.focus(); caixa.select();
+      try { copiou = document.execCommand("copy"); } catch (_) {}
+    }
+    msg(copiou ? "Copiado! Cole nos comentários do vídeo." : "Selecione o texto abaixo e copie (Ctrl+C).");
+  }
+  $("copiar").onclick = copiarInfo;
+
+  let confirmandoRemocao = false;
+  $("remover").onclick = async () => {
+    const botao = $("remover");
+    if (!confirmandoRemocao) {
+      confirmandoRemocao = true;
+      botao.textContent = "Clique de novo para confirmar";
+      setTimeout(() => { confirmandoRemocao = false; botao.textContent = "Remover permissão"; }, 4000);
+      return;
+    }
+    confirmandoRemocao = false;
+    botao.textContent = "Remover permissão";
+    pediuAutomatico = true;            // não pedir a senha de novo sozinho
+    try {
+      await invoke("remover_permissao");
+      msg("Permissão removida. O programa volta a pedir senha para controlar a luz.");
+    } catch (err) {
+      msg(err === "cancelado" ? "Cancelado." : "Erro: " + err);
+    }
+    atualizar();
+  };
+
+  async function carregarConfig() {
+    try {
+      $("auto").checked = await invoke("autostart_estado");
+      $("bandeja").checked = await invoke("bandeja_estado");
+    } catch (_) {}
+  }
+
+  carregarConfig();
 
   atualizar();
   setInterval(atualizar, 2000);

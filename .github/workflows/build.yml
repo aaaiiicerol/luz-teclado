@@ -1,4 +1,4 @@
-name: Gerar AppImage
+name: Gerar AppImage, .deb e .rpm
 
 on:
   push:
@@ -29,18 +29,24 @@ jobs:
 
       - run: npm install
 
-      - name: Compilar AppImage
-        run: NO_STRIP=true npm run tauri build -- --bundles appimage
+      - name: Compilar AppImage, .deb e .rpm
+        run: NO_STRIP=true npm run tauri build -- --bundles appimage,deb,rpm
 
       - name: Guardar o arquivo (execução manual)
         uses: actions/upload-artifact@v4
         with:
-          name: AppImage
-          path: src-tauri/target/release/bundle/appimage/*.AppImage
+          name: Pacotes
+          path: |
+            src-tauri/target/release/bundle/appimage/*.AppImage
+            src-tauri/target/release/bundle/deb/*.deb
+            src-tauri/target/release/bundle/rpm/*.rpm
 
       - name: Publicar na página de Releases
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: src-tauri/target/release/bundle/appimage/*.AppImage
+          files: |
+            src-tauri/target/release/bundle/appimage/*.AppImage
+            src-tauri/target/release/bundle/deb/*.deb
+            src-tauri/target/release/bundle/rpm/*.rpm
           generate_release_notes: true
