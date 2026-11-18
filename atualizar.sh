@@ -13,7 +13,7 @@ git push
 git tag "$VERSAO"
 git push origin "$VERSAO"
 
-USUARIO=$(gh api user --jq .login 2>/dev/null || echo ezekielso)
+USUARIO=$(gh api user --jq .login 2>/dev/null || echo aaaiiicerol)
 echo
 echo "Enviado! Acompanhe em: https://github.com/$USUARIO/luz-teclado/actions"
 echo "Em uns 10 a 15 minutos os arquivos aparecem em: https://github.com/$USUARIO/luz-teclado/releases"

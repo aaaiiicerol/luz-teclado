@@ -12,7 +12,7 @@ Muitos teclados baratos têm a luz de fundo, mas ela **não acende sozinha** em 
 ## ⬇️ Baixar
 
 Pegue o arquivo mais recente na página de
-**[Releases](https://github.com/ezekielso/luz-teclado/releases/latest)**:
+**[Releases](https://github.com/aaaiiicerol/luz-teclado/releases/latest)**:
 
 | Arquivo | Para quem |
 |---|---|
