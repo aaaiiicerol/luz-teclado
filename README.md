@@ -82,7 +82,7 @@ Para desfazer a permissão, use o botão **Remover permissão** ou `sudo rm /etc
 Precisa de Node.js e Rust.
 
 ```bash
-git clone https://github.com/ezekielso/luz-teclado
+git clone https://github.com/aaaiiicerol/luz-teclado
 cd luz-teclado
 npm install
 NO_STRIP=true npm run tauri build -- --bundles appimage
